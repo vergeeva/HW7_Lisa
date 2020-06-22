@@ -12,12 +12,12 @@ class length:
     #     return self.__km > 0 and 0 < self.__m < 1001
 
     def __check(self):
-        if self.__km > 0 and self.__m > 1000:
+        if self.__km >= 0 and self.__m > 1000:
             self.__km += self.__m // 1000
             self.__m -= self.__m // 1000 * 1000
             return 1
         else:
-            return self.__km > 0 and 0 < self.__m < 1001
+            return self.__km >= 0 and 0 <= self.__m < 1001
 
     def __init__(self, km=0, m=0):
         self.__km = km
@@ -69,33 +69,42 @@ class length:
 # расстояния в разных единицах
 class distance(length):
     def __check(self):
-        return self.__type == 0 or self.__type == 1 or self.__type == 2 or self.__type == 3
+        return self.__i == 0 or self.__i == 1 or self.__i == 2 or self.__i == 3
 
-    def __convert(self):
-        if self.__type == 0:
+    def convert_type(self):
+        if self.__i == 0:
             return self.convert() * 0.000621
-        elif self.__type == 1:
+        elif self.__i == 1:
             return self.convert() * 39.3701
-        elif self.__type == 2:
+        elif self.__i == 2:
             return self.convert() * 1.09361
-        elif self.__type == 3:
+        elif self.__i == 3:
             return self.convert() * 3.28084
 
-    def __init__(self, type=0, km=0, m=0):
+    def __init__(self, i=0, km=0, m=0):
         super().__init__(km, m)
-        self.__type = type  # 0-миля; 1-дюйм; 2-ярд; 3-фут
+        self.__type = ['мили', 'дюймы', 'ярды', 'футы']
+        self.__i = i  # 0-миля; 1-дюйм; 2-ярд; 3-фут
 
     def __str__(self):
-        return f'данные: правило перевода:{self.__type} {super().__str__()}'
+        return f'данные: переводить в {self.__type[self.__i]} {super().__str__()}'
 
     def make_table(self):
         print("_________________________________")
-        print(f'|{self}\t|')
+        print(f'|\t\t\t{super().convert()}м\t\t\t\t|')
         print("|¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯|")
-        print(self)
         for i in range(0, 4):
-            self.__type = i
-            # print(f'|значение в метрах = {super().convert()}\t|')
-            print(f'|тип правила = {i}\t\t\t\t|')
-            print(f'Значение по правилу: {round(self.__convert(), 2)}\t|')
+            self.__i = i
+            print(f'|перевод в {self.__type[i]} =  {round(self.convert_type(), 2)}\t')
         print("|_______________________________|")
+
+    @property
+    def i(self):
+        return self.__i
+
+    @i.setter
+    def i(self, i):
+        self.__i = i
+
+    def __eq__(self, other):
+        return self.__i == other.i and self.convert() == other.convert()
